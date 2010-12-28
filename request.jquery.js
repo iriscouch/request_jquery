@@ -51,20 +51,20 @@ jQuery.request = function(options, callback) {
 
   var default_timeout = 3 * 60 * 1000; // 3 minutes
 
-  jQuery.ajax({ 'async'      : true
-              , 'cache'      : (options.cache || false)
-              , 'contentType': (options.headers['content-type'] || 'application/x-www-form-urlencoded')
-              , 'type'       : options.method
-              , 'url'        : options.uri
-              , 'data'       : (options.body || undefined)
-              , 'timeout'    : (options.timeout || default_timeout)
-              , 'dataType'   : 'text'
-              , 'processData': false
-              , 'beforeSend' : beforeSend
-              , 'success'    : onSuccess
-              , 'error'      : onError
-              , 'complete'   : onComplete
-              });
+  return jQuery.ajax({ 'async'      : true
+                     , 'cache'      : (options.cache || false)
+                     , 'contentType': (options.headers['content-type'] || 'application/x-www-form-urlencoded')
+                     , 'type'       : options.method
+                     , 'url'        : options.uri
+                     , 'data'       : (options.body || undefined)
+                     , 'timeout'    : (options.timeout || default_timeout)
+                     , 'dataType'   : 'text'
+                     , 'processData': false
+                     , 'beforeSend' : beforeSend
+                     , 'success'    : onSuccess
+                     , 'error'      : onError
+                     , 'complete'   : onComplete
+                     });
 
 };
 
@@ -76,7 +76,7 @@ jQuery.req_json = function(options, callback) {
   if(options.method !== 'GET')
     options.headers['content-type'] = 'application/json';
 
-  jQuery.request(options, function(er, resp, body) {
+  return jQuery.request(options, function(er, resp, body) {
     if(!er)
       body = JSON.parse(body)
     return callback && callback(er, resp, body);
