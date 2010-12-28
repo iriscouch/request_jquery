@@ -33,14 +33,23 @@ jQuery.request = function(options, callback) {
   }
 
   var onError = function (xhr, reason, er) {
+    var body = undefined;
+
     if(!er) {
-      if(reason == 'timeout')
-        er = new Error("Timeout");
-      else
+      if(reason == 'timeout') {
+        er = new Error("Request timeout");
+      } else if(reason == 'error') {
+        if(xhr.status > 299 && xhr.responseText.length > 0) {
+          // Looks like HTTP worked, so there is no error as far as request is concerned. Simulate a success scenario.
+          er = null;
+          body = xhr.responseText;
+        }
+      } else {
         er = new Error("Unknown error; reason = " + reason);
+      }
     }
 
-    result = [er, xhr];
+    result = [er, xhr, body];
   }
 
   var onComplete = function(xhr, reason) {
