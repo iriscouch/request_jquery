@@ -82,3 +82,16 @@ jQuery.req_json = function(options, callback) {
     return callback && callback(er, resp, body);
   })
 }
+
+jQuery.req_couch = function(options, callback) {
+  return jQuery.req_json(options, function(er, resp, body) {
+    if(er)
+      return callback && callback(er, resp, body);
+
+    if((resp.status < 200 || resp.status > 299) && body.error)
+      // The body is a Couch JSON object indicating the error.
+      return callback && callback(body, resp);
+
+    return callback && callback(er, resp, body);
+  })
+}
