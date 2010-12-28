@@ -1,3 +1,5 @@
+define(['jquery'], function() {
+
 jQuery.request = function(options, callback) {
   options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
 
@@ -104,3 +106,5 @@ jQuery.request.couch = function(options, callback) {
     return callback && callback(er, resp, body);
   })
 }
+
+});
