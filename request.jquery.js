@@ -77,7 +77,7 @@ jQuery.request = function(options, callback) {
 
 };
 
-jQuery.req_json = function(options, callback) {
+jQuery.request.json = function(options, callback) {
   options = JSON.parse(JSON.stringify(options));
   options.headers = options.headers || {};
   options.headers['accept'] = options.headers['accept'] || 'application/json';
@@ -92,8 +92,8 @@ jQuery.req_json = function(options, callback) {
   })
 }
 
-jQuery.req_couch = function(options, callback) {
-  return jQuery.req_json(options, function(er, resp, body) {
+jQuery.request.couch = function(options, callback) {
+  return jQuery.request.json(options, function(er, resp, body) {
     if(er)
       return callback && callback(er, resp, body);
 
