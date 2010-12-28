@@ -67,3 +67,18 @@ jQuery.request = function(options, callback) {
               });
 
 };
+
+jQuery.req_json = function(options, callback) {
+  options = JSON.parse(JSON.stringify(options));
+  options.headers = options.headers || {};
+  options.headers['accept'] = options.headers['accept'] || 'application/json';
+
+  if(options.method !== 'GET')
+    options.headers['content-type'] = 'application/json';
+
+  jQuery.request(options, function(er, resp, body) {
+    if(!er)
+      body = JSON.parse(body)
+    return callback && callback(er, resp, body);
+  })
+}
