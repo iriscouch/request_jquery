@@ -90,6 +90,17 @@ function request(options, callback) {
 
 };
 
+var shortcuts = [ 'get', 'put', 'post', 'head' ];
+shortcuts.forEach(function(shortcut) {
+  request[shortcut.toLowerCase()] = function(opts) {
+    opts = JSON.parse(JSON.stringify(opts));
+    opts.method = shortcut.toUpperCase();
+
+    var args = [opts].concat(Array.prototype.slice.apply(arguments, [1]));
+    return request.apply(this, args);
+  }
+})
+
 request.json = function(options, callback) {
   options = JSON.parse(JSON.stringify(options));
   options.headers = options.headers || {};
