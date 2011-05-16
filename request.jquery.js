@@ -1,4 +1,15 @@
-define(['jquery'], function() {
+var real_define = window.define;
+if(!real_define) {
+  real_define = function(deps, definer) {
+    if(!window.jQuery)
+      throw new Error("Can't find jQuery");
+    return definer(window.jQuery);
+  }
+}
+
+(function(define) {
+
+define(['jquery'], function(jQuery) {
 
 jQuery.request = function(options, callback) {
   options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
@@ -108,3 +119,5 @@ jQuery.request.couch = function(options, callback) {
 }
 
 });
+
+})(real_define);
