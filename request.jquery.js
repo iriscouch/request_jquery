@@ -8,10 +8,11 @@ if(!real_define) {
 }
 
 (function(define) {
+  define(['jquery'], function(jQuery) {
 
-define(['jquery'], function(jQuery) {
+var DEFAULT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
-jQuery.request = function(options, callback) {
+function request(options, callback) {
   options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
 
   if (!options.uri)
@@ -71,7 +72,6 @@ jQuery.request = function(options, callback) {
     return callback && callback.apply(this, result);
   }
 
-  var default_timeout = 3 * 60 * 1000; // 3 minutes
 
   return jQuery.ajax({ 'async'      : true
                      , 'cache'      : (options.cache || false)
@@ -79,7 +79,7 @@ jQuery.request = function(options, callback) {
                      , 'type'       : options.method
                      , 'url'        : options.uri
                      , 'data'       : (options.body || undefined)
-                     , 'timeout'    : (options.timeout || default_timeout)
+                     , 'timeout'    : (options.timeout || DEFAULT_TIMEOUT)
                      , 'dataType'   : 'text'
                      , 'processData': false
                      , 'beforeSend' : beforeSend
@@ -90,7 +90,7 @@ jQuery.request = function(options, callback) {
 
 };
 
-jQuery.request.json = function(options, callback) {
+request.json = function(options, callback) {
   options = JSON.parse(JSON.stringify(options));
   options.headers = options.headers || {};
   options.headers['accept'] = options.headers['accept'] || 'application/json';
@@ -98,15 +98,15 @@ jQuery.request.json = function(options, callback) {
   if(options.method !== 'GET')
     options.headers['content-type'] = 'application/json';
 
-  return jQuery.request(options, function(er, resp, body) {
+  return request(options, function(er, resp, body) {
     if(!er)
       body = JSON.parse(body)
     return callback && callback(er, resp, body);
   })
 }
 
-jQuery.request.couch = function(options, callback) {
-  return jQuery.request.json(options, function(er, resp, body) {
+request.couch = function(options, callback) {
+  return request.json(options, function(er, resp, body) {
     if(er)
       return callback && callback(er, resp, body);
 
@@ -118,6 +118,9 @@ jQuery.request.couch = function(options, callback) {
   })
 }
 
-});
+jQuery(document).ready(function() {
+  jQuery.request = request;
+})
 
+  });
 })(real_define);
