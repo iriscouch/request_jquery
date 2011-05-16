@@ -1,14 +1,16 @@
-var real_define = window.define;
-if(!real_define) {
-  real_define = function(deps, definer) {
-    if(!window.jQuery)
-      throw new Error("Can't find jQuery");
-    return definer(window.jQuery);
-  }
+(function() {
+var define = window.define
+if(!define) define = function(deps, definer) {
+  if(!window.jQuery)
+    throw new Error("Can't find jQuery");
+  return definer(window.jQuery);
 }
 
-(function(define) {
-  define(['jquery'], function(jQuery) {
+define(['jquery'], function(jQuery) {
+
+//
+// request.jquery
+//
 
 var DEFAULT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
@@ -24,7 +26,7 @@ function request(options, callback) {
     if(options[opt])
       throw new Error("options." + opt + " is not supported");
   })
-  
+
   options.method = options.method || 'GET';
   options.headers = options.headers || {};
 
@@ -134,4 +136,4 @@ jQuery(document).ready(function() {
 })
 
   });
-})(real_define);
+})();
