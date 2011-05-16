@@ -75,6 +75,8 @@ function request(options, callback) {
   }
 
 
+  var cors_creds = !!( options.creds || options.withCredentials );
+
   return jQuery.ajax({ 'async'      : true
                      , 'cache'      : (options.cache || false)
                      , 'contentType': (options.headers['content-type'] || 'application/x-www-form-urlencoded')
@@ -88,6 +90,8 @@ function request(options, callback) {
                      , 'success'    : onSuccess
                      , 'error'      : onError
                      , 'complete'   : onComplete
+                     , 'xhrFields'  : { 'withCredentials': cors_creds
+                                      }
                      });
 
 };
