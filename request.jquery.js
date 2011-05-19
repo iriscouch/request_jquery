@@ -15,7 +15,10 @@ define(['jquery'], function(jQuery) {
 var DEFAULT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
 function request(options, callback) {
-  options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
+  if(typeof options === 'string')
+    options = {'uri':options};
+  else
+    options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
 
   if (!options.uri)
     throw new Error("options.uri is a required argument");
@@ -98,9 +101,16 @@ function request(options, callback) {
 
 var shortcuts = [ 'get', 'put', 'post', 'head' ];
 shortcuts.forEach(function(shortcut) {
-  request[shortcut.toLowerCase()] = function(opts) {
-    opts = JSON.parse(JSON.stringify(opts));
-    opts.method = shortcut.toUpperCase();
+  var method = shortcut.toUpperCase();
+  var func   = shoftcut.toLowerCase();
+
+  request[func] = function(opts) {
+    if(typeof opts === 'string')
+      opts = {'method':method, 'uri':opts};
+    else {
+      opts = JSON.parse(JSON.stringify(opts));
+      opts.method = method;
+    }
 
     var args = [opts].concat(Array.prototype.slice.apply(arguments, [1]));
     return request.apply(this, args);
