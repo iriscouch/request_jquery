@@ -36,10 +36,19 @@ function request(options, callback) {
   if(options.headers.host)
     throw new Error("Options.headers.host is not supported");
 
+  /*
+  // Browsers do not like this.
   if(options.body)
     options.headers['content-length'] = options.body.length;
+  */
 
+  var headers = {};
   var beforeSend = function(xhr, settings) {
+    if(!options.headers.authorization && options.auth) {
+      debugger
+      options.headers.authorization = 'Basic ' + b64_enc(options.auth.username + ':' + options.auth.password);
+    }
+
     for (var key in options.headers)
       xhr.setRequestHeader(key, options.headers[key]);
   }
@@ -86,7 +95,7 @@ function request(options, callback) {
                      , 'type'       : options.method
                      , 'url'        : options.uri
                      , 'data'       : (options.body || undefined)
-                     , 'timeout'    : (options.timeout || DEFAULT_TIMEOUT)
+                     , 'timeout'    : (options.timeout || request.DEFAULT_TIMEOUT)
                      , 'dataType'   : 'text'
                      , 'processData': false
                      , 'beforeSend' : beforeSend
@@ -98,6 +107,9 @@ function request(options, callback) {
                      });
 
 };
+
+request.withCredentials = false;
+request.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
 
 var shortcuts = [ 'get', 'put', 'post', 'head' ];
 shortcuts.forEach(function(shortcut) {
@@ -148,6 +160,53 @@ request.couch = function(options, callback) {
 jQuery(document).ready(function() {
   jQuery.request = request;
 })
+
+//
+// Utility
+//
+
+// MIT License from http://phpjs.org/functions/base64_encode:358
+function b64_enc (data) {
+    // Encodes string using MIME base64 algorithm
+    var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, enc="", tmp_arr = [];
+
+    if (!data) {
+        return data;
+    }
+
+    // assume utf8 data
+    // data = this.utf8_encode(data+'');
+
+    do { // pack three octets into four hexets
+        o1 = data.charCodeAt(i++);
+        o2 = data.charCodeAt(i++);
+        o3 = data.charCodeAt(i++);
+
+        bits = o1<<16 | o2<<8 | o3;
+
+        h1 = bits>>18 & 0x3f;
+        h2 = bits>>12 & 0x3f;
+        h3 = bits>>6 & 0x3f;
+        h4 = bits & 0x3f;
+
+        // use hexets to index into b64, and append result to encoded string
+        tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
+    } while (i < data.length);
+
+    enc = tmp_arr.join('');
+
+    switch (data.length % 3) {
+        case 1:
+            enc = enc.slice(0, -2) + '==';
+        break;
+        case 2:
+            enc = enc.slice(0, -1) + '=';
+        break;
+    }
+
+    return enc;
+}
 
   });
 })();
