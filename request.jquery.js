@@ -161,6 +161,10 @@ jQuery(document).ready(function() {
   jQuery.request = request;
 })
 
+return request;
+
+});
+
 //
 // Utility
 //
@@ -208,5 +212,4 @@ function b64_enc (data) {
     return enc;
 }
 
-  });
 })();
