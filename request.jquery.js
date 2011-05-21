@@ -114,7 +114,7 @@ request.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
 var shortcuts = [ 'get', 'put', 'post', 'head' ];
 shortcuts.forEach(function(shortcut) {
   var method = shortcut.toUpperCase();
-  var func   = shoftcut.toLowerCase();
+  var func   = shortcut.toLowerCase();
 
   request[func] = function(opts) {
     if(typeof opts === 'string')
