@@ -20,9 +20,20 @@ function request(options, callback) {
   else
     options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
 
-  if (!options.uri)
+  if (!options.uri && !options.url)
     throw new Error("options.uri is a required argument");
-  else if(typeof options.uri != "string")
+
+  if(options.url) {
+    options.uri = options.url;
+    delete options.url;
+  }
+
+  if(options.json) {
+    options.body = JSON.stringify(options.json);
+    delete options.json;
+  }
+
+  if(typeof options.uri != "string")
     throw new Error("options.uri must be a string");
 
   ; ['proxy', '_redirectsFollowed', 'maxRedirects', 'followRedirect'].forEach(function(opt) {
