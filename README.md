@@ -34,6 +34,8 @@ To work with JSON, `$.request.json` will conveniently set the `Content-Type` and
         console.log('Server ok, id = ' + result.id);
     })
 
+## Convenient CouchDB
+
 Finally, jQuery Request provides a CouchDB wrapper. It is the same as the JSON wrapper, however it will indicate an error if the HTTP query was fine, but there was a problem at the database level. The most common example is `409 Conflict`.
 
     $.request.couch({method:'PUT', url:'/db/existing_doc', json:{"will_conflict":"you bet!"}, function(er, resp, result) {
