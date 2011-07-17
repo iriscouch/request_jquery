@@ -10,7 +10,7 @@ If you don't care about NodeJS, but simply want less tedium and verbosity for yo
 
 GET a resource:
 
-    request('/some/resource.txt', function(er, resp, body) {
+    $.request('/some/resource.txt', function(er, resp, body) {
       if(er)
         throw er;
       console.log("I got: " + body);
@@ -18,15 +18,15 @@ GET a resource:
 
 PUT a resource:
 
-    request.put({uri:'/some/resource.xml', body:'<foo><bar/></foo>'}, function(er, resp, body) {
+    $.request.put({uri:'/some/resource.xml', body:'<foo><bar/></foo>'}, function(er, resp, body) {
       if(er)
         throw new Error("XML PUT failed (" + er + "): HTTP status was " + resp.status);
       console.log("Stored the XML");
     })
 
-To work with JSON, `request.json` will conveniently set the `Content-Type` and `Accept` headers, and handle parsing and serialization.
+To work with JSON, `$.request.json` will conveniently set the `Content-Type` and `Accept` headers, and handle parsing and serialization.
 
-    request.json({method:'POST', url:'/db/', json:{"relaxed":true}, function(er, resp, result) {
+    $.request.json({method:'POST', url:'/db/', json:{"relaxed":true}, function(er, resp, result) {
       if(er)
         throw er;
 
@@ -36,7 +36,7 @@ To work with JSON, `request.json` will conveniently set the `Content-Type` and `
 
 Finally, jQuery Request provides a CouchDB wrapper. It is the same as the JSON wrapper, however it will indicate an error if the HTTP query was fine, but there was a problem at the database level. The most common example is `409 Conflict`.
 
-    request.couch({method:'PUT', url:'/db/existing_doc', json:{"will_conflict":"you bet!"}, function(er, resp, result) {
+    $.request.couch({method:'PUT', url:'/db/existing_doc', json:{"will_conflict":"you bet!"}, function(er, resp, result) {
       if(er.conflict)
         return console.error("Couch said no: " + er.reason); // Output: Couch said no: Document update conflict.
 
