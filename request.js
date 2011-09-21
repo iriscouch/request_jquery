@@ -1,15 +1,12 @@
 (function() {
-var define = window.define
-if(!define) define = function(deps, definer) {
-  if(!window.jQuery)
-    throw new Error("Can't find jQuery");
-  return definer(window.jQuery);
-}
+var define = window.define;
+if(!define)
+  define = function(deps, definer) { return definer() };
 
-define(['jquery'], function(jQuery) {
+define([], function() {
 
 //
-// request.jquery
+// request
 //
 
 var DEFAULT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
@@ -168,13 +165,9 @@ request.couch = function(options, callback) {
   })
 }
 
-jQuery(document).ready(function() {
-  jQuery.request = request;
-})
-
 return request;
 
-});
+}); // define "request"
 
 //
 // Utility
