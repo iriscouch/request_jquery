@@ -1,20 +1,6 @@
-(function() {
-var define = window.define
-if(!define) define = function(deps, definer) {
-  if(!window.jQuery)
-    throw new Error("Can't find jQuery");
-  return definer(window.jQuery);
-}
-
-define(['jquery'], function(jQuery) {
-
-//
-// request.jquery
-//
-
 var DEFAULT_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
-function request(options, callback) {
+var request = module.exports = function request(options, callback) {
   if(typeof options === 'string')
     options = {'uri':options};
   else
@@ -174,14 +160,6 @@ request.couch = function(options, callback) {
   })
 }
 
-jQuery(document).ready(function() {
-  jQuery.request = request;
-})
-
-return request;
-
-});
-
 //
 // Utility
 //
@@ -228,5 +206,3 @@ function b64_enc (data) {
 
     return enc;
 }
-
-})();

@@ -1,0 +1,10 @@
+{
+    "name": "request-jquery",
+    "version": "0.0.1",
+    "website": "https://github.com/iriscouch/request_jquery",
+    "modules": "request.js",
+    "dependencies": {
+        "modules": ">=0.0.8"
+    },
+    "description": "A port of Mikeal Rogers's excellent request library to the browser using jQuery.ajax"
+}
