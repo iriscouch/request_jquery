@@ -1,10 +1,10 @@
 (function() {
-var define = window.define
+var define = window.define;
 if(!define) define = function(deps, definer) {
   if(!window.jQuery)
     throw new Error("Can't find jQuery");
   return definer(window.jQuery);
-}
+};
 
 define(['jquery'], function(jQuery) {
 
@@ -36,10 +36,10 @@ function request(options, callback) {
   if(typeof options.uri != "string")
     throw new Error("options.uri must be a string");
 
-  ; ['proxy', '_redirectsFollowed', 'maxRedirects', 'followRedirect'].forEach(function(opt) {
+  ['proxy', '_redirectsFollowed', 'maxRedirects', 'followRedirect'].forEach(function(opt) {
     if(options[opt])
       throw new Error("options." + opt + " is not supported");
-  })
+  });
 
   options.method = options.method || 'GET';
   options.headers = options.headers || {};
@@ -56,13 +56,12 @@ function request(options, callback) {
   var headers = {};
   var beforeSend = function(xhr, settings) {
     if(!options.headers.authorization && options.auth) {
-      debugger
       options.headers.authorization = 'Basic ' + b64_enc(options.auth.username + ':' + options.auth.password);
     }
 
     for (var key in options.headers)
       xhr.setRequestHeader(key, options.headers[key]);
-  }
+  };
 
   // Establish a place where the callback arguments will go.
   var result = [];
@@ -77,10 +76,10 @@ function request(options, callback) {
 
   var onSuccess = function(data, reason, xhr) {
     result = [null, fix_xhr(xhr), data];
-  }
+  };
 
   var onError = function (xhr, reason, er) {
-    var body = undefined;
+    var body;
 
     if(reason == 'timeout') {
       er = er || new Error("Request timeout");
@@ -95,13 +94,13 @@ function request(options, callback) {
     }
 
     result = [er, fix_xhr(xhr), body];
-  }
+  };
 
   var onComplete = function(xhr, reason) {
     if(result.length === 0)
       result = [new Error("Result does not exist at completion time")];
     return callback && callback.apply(this, result);
-  }
+  };
 
 
   var cors_creds = !!( options.creds || options.withCredentials );
@@ -123,7 +122,7 @@ function request(options, callback) {
                                       }
                      });
 
-};
+}
 
 request.withCredentials = false;
 request.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
@@ -143,23 +142,23 @@ shortcuts.forEach(function(shortcut) {
 
     var args = [opts].concat(Array.prototype.slice.apply(arguments, [1]));
     return request.apply(this, args);
-  }
-})
+  };
+});
 
 request.json = function(options, callback) {
-  options = JSON.parse(JSON.stringify(options));
-  options.headers = options.headers || {};
-  options.headers['accept'] = options.headers['accept'] || 'application/json';
+  options                = JSON.parse(JSON.stringify(options));
+  options.headers        = options.headers || {};
+  options.headers.accept = options.headers.accept || 'application/json';
 
   if(options.method !== 'GET')
     options.headers['content-type'] = 'application/json';
 
   return request(options, function(er, resp, body) {
     if(!er)
-      body = JSON.parse(body)
+      body = JSON.parse(body);
     return callback && callback(er, resp, body);
-  })
-}
+  });
+};
 
 request.couch = function(options, callback) {
   return request.json(options, function(er, resp, body) {
@@ -171,12 +170,12 @@ request.couch = function(options, callback) {
       return callback && callback(body, resp);
 
     return callback && callback(er, resp, body);
-  })
-}
+  });
+};
 
 jQuery(document).ready(function() {
   jQuery.request = request;
-})
+});
 
 return request;
 
