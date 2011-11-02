@@ -89,6 +89,9 @@ function request(options, callback) {
         er = null;
         body = xhr.responseText;
       }
+      else {
+        er = new Error("Unauthorized CORS Request");
+      }
     } else {
       er = er || new Error("Unknown error; reason = " + reason);
     }
