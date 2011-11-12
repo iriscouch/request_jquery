@@ -28,11 +28,6 @@ function request(options, callback) {
   if(!options.uri && options.uri !== "")
     throw new Error("options.uri is a required argument");
 
-  if(options.json) {
-    options.body = JSON.stringify(options.json);
-    delete options.json;
-  }
-
   if(typeof options.uri != "string")
     throw new Error("options.uri must be a string");
 
@@ -43,6 +38,21 @@ function request(options, callback) {
 
   options.method = options.method || 'GET';
   options.headers = options.headers || {};
+  
+  if(options.json) {
+    var jsonType = typeof(options.json)
+
+    if( (jsonType == 'boolean') && (typeof(options.body) == 'object') )
+      options.body = JSON.stringify(options.body)
+    else if (jsonType == 'object')
+      options.body = JSON.stringify(options.json)
+    else if (jsonType == 'string')
+      options.body = options.json
+          
+    options.headers.accept = options.headers.accept || 'application/json';
+    if(options.method !== 'GET')
+      options.headers['content-type'] = 'application/json';    
+  }
 
   if(options.headers.host)
     throw new Error("Options.headers.host is not supported");
@@ -65,6 +75,12 @@ function request(options, callback) {
 
   // Establish a place where the callback arguments will go.
   var result = [];
+  
+  function makeResult(err, xhr, body) {
+    if(options.json && body)
+      body = JSON.parse(body);
+    return [err, fix_xhr(xhr), body];
+  }
 
   function fix_xhr(xhr) {
     var fixed_xhr = {};
@@ -75,7 +91,7 @@ function request(options, callback) {
   }
 
   var onSuccess = function(data, reason, xhr) {
-    result = [null, fix_xhr(xhr), data];
+    result = makeResult(null, xhr, data);
   };
 
   var onError = function (xhr, reason, er) {
@@ -96,7 +112,7 @@ function request(options, callback) {
       er = er || new Error("Unknown error; reason = " + reason);
     }
 
-    result = [er, fix_xhr(xhr), body];
+    result = makeResult(er, xhr, body);
   };
 
   var onComplete = function(xhr, reason) {
@@ -104,7 +120,6 @@ function request(options, callback) {
       result = [new Error("Result does not exist at completion time")];
     return callback && callback.apply(this, result);
   };
-
 
   var cors_creds = !!( options.creds || options.withCredentials );
 
@@ -148,23 +163,8 @@ shortcuts.forEach(function(shortcut) {
   };
 });
 
-request.json = function(options, callback) {
-  options                = JSON.parse(JSON.stringify(options));
-  options.headers        = options.headers || {};
-  options.headers.accept = options.headers.accept || 'application/json';
-
-  if(options.method !== 'GET')
-    options.headers['content-type'] = 'application/json';
-
-  return request(options, function(er, resp, body) {
-    if(!er)
-      body = JSON.parse(body);
-    return callback && callback(er, resp, body);
-  });
-};
-
 request.couch = function(options, callback) {
-  return request.json(options, function(er, resp, body) {
+  return request($.extend(options, {json: true}), function(er, resp, body) {
     if(er)
       return callback && callback(er, resp, body);
 
