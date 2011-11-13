@@ -24,9 +24,9 @@ PUT a resource:
       console.log("Stored the XML");
     })
 
-To work with JSON, `$.request.json` will conveniently set the `Content-Type` and `Accept` headers, and handle parsing and serialization.
+To work with JSON, set `options.json` to be truthy and `$.request` will conveniently set the `Content-Type` and `Accept` headers, and handle parsing and serialization.
 
-    $.request.json({method:'POST', url:'/db/', json:{"relaxed":true}, function(er, resp, result) {
+    $.request({json: true, method:'POST', url:'/db/', body:{"relaxed":true}, function(er, resp, result) {
       if(er)
         throw er;
 
@@ -34,12 +34,16 @@ To work with JSON, `$.request.json` will conveniently set the `Content-Type` and
         console.log('Server ok, id = ' + result.id);
     })
 
+You can also use this shorthand version (pass data into the `json` option directly):
+
+    $.request({json: {"relaxed":true}, method:'POST', url:'/db/'} ...
+
 ## Convenient CouchDB
 
 Finally, jQuery Request provides a CouchDB wrapper. It is the same as the JSON wrapper, however it will indicate an error if the HTTP query was fine, but there was a problem at the database level. The most common example is `409 Conflict`.
 
-    $.request.couch({method:'PUT', url:'/db/existing_doc', json:{"will_conflict":"you bet!"}, function(er, resp, result) {
-      if(er.conflict)
+    $.request.couch({method:'PUT', url:'/db/existing_doc', body:{"will_conflict":"you bet!"}}, function(er, resp, result) {
+      if(er.error === 'conflict')
         return console.error("Couch said no: " + er.reason); // Output: Couch said no: Document update conflict.
 
       if(er)
